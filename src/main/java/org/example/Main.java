@@ -1,12 +1,11 @@
 package org.example;
 
-import com.microsoft.azure.functions.HttpMethod;
-import com.microsoft.azure.functions.HttpRequestMessage;
-import com.microsoft.azure.functions.HttpResponseMessage;
-import com.microsoft.azure.functions.HttpStatus;
+import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
+import com.microsoft.azure.functions.*;
 import com.microsoft.azure.functions.annotation.AuthorizationLevel;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
+import com.microsoft.azure.functions.annotation.ServiceBusQueueTrigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -36,5 +35,14 @@ public class Main {
             .log("test2");
 
         return request.createResponseBuilder(HttpStatus.OK).body("response").build();
+    }
+
+    @FunctionName("MyServiceBusTrigger")
+    public void serviceBusTrigger(
+        @ServiceBusQueueTrigger(name = "message", queueName = "test-queue", connection = "AzureServiceBusConnection")
+        ServiceBusReceivedMessage message,
+        final ExecutionContext context
+    ) {
+        context.getLogger().info("Message Id: " + message.getMessageId());
     }
 }
