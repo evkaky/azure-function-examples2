@@ -2,10 +2,7 @@ package org.example;
 
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.microsoft.azure.functions.*;
-import com.microsoft.azure.functions.annotation.AuthorizationLevel;
-import com.microsoft.azure.functions.annotation.FunctionName;
-import com.microsoft.azure.functions.annotation.HttpTrigger;
-import com.microsoft.azure.functions.annotation.ServiceBusQueueTrigger;
+import com.microsoft.azure.functions.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -38,11 +35,13 @@ public class Main {
     }
 
     @FunctionName("MyServiceBusTrigger")
+    @FixedDelayRetry(maxRetryCount = 2, delayInterval = "00:00:10")
     public void serviceBusTrigger(
         @ServiceBusQueueTrigger(name = "message", queueName = "test-queue", connection = "AzureServiceBusConnection")
         ServiceBusReceivedMessage message,
         final ExecutionContext context
     ) {
+        System.exit(1);
         context.getLogger().info("Message Id: " + message.getMessageId());
     }
 }
