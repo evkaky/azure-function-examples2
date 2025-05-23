@@ -13,7 +13,6 @@ import org.springframework.boot.actuate.autoconfigure.observation.ObservationReg
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.server.observation.ServerRequestObservationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -29,11 +28,10 @@ public class Main {
 
     @Bean
     ObservationRegistryCustomizer<?> customCountryTraceAttribute() {
-        return registry -> registry.observationConfig()
+        return registry -> registry
+            .observationConfig()
             .observationFilter((context) -> {
-                if (context instanceof ServerRequestObservationContext) {
-                    context.addLowCardinalityKeyValue(KeyValue.of("country", "GB"));
-                }
+                context.addLowCardinalityKeyValue(KeyValue.of("country", "GB"));
                 return context;
             });
     }
